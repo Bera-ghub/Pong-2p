@@ -1,0 +1,118 @@
+[gd_scene load_steps=13 format=3 uid="uid://lvecmol6dps2"]
+
+[ext_resource type="Texture2D" uid="uid://d2i05w6u0v61n" path="res://assets/pong png.png" id="1_36ms2"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="2_a2cwr"]
+[ext_resource type="Texture2D" uid="uid://bw0i7y6vmy570" path="res://assets/platform.png" id="2_mo1ne"]
+[ext_resource type="Texture2D" uid="uid://c8g7n3htayqot" path="res://assets/Ball.png" id="3_a3emq"]
+[ext_resource type="Script" path="res://scripts/p_1.gd" id="3_y3hp3"]
+[ext_resource type="FontFile" uid="uid://bahfde1cdm3if" path="res://assets/fonts/PixelOperator8.ttf" id="4_ruj6y"]
+[ext_resource type="Script" path="res://scripts/p_2.gd" id="5_1njoh"]
+[ext_resource type="Script" path="res://scripts/ball.gd" id="6_slau7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uvfpa"]
+size = Vector2(28, 98)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_alcwd"]
+radius = 9.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t00ru"]
+size = Vector2(1152, 58)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3hik1"]
+size = Vector2(95, 648)
+
+[node name="Main" type="Sprite2D"]
+texture_filter = 1
+texture = ExtResource("1_36ms2")
+centered = false
+script = ExtResource("2_a2cwr")
+
+[node name="P1" type="StaticBody2D" parent="."]
+position = Vector2(50, 324)
+script = ExtResource("3_y3hp3")
+
+[node name="Sprite2D" type="Sprite2D" parent="P1"]
+scale = Vector2(7, 7)
+texture = ExtResource("2_mo1ne")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="P1"]
+shape = SubResource("RectangleShape2D_uvfpa")
+
+[node name="P2" type="StaticBody2D" parent="."]
+position = Vector2(1082, 324)
+script = ExtResource("5_1njoh")
+
+[node name="Sprite2D" type="Sprite2D" parent="P2"]
+scale = Vector2(7, 7)
+texture = ExtResource("2_mo1ne")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="P2"]
+shape = SubResource("RectangleShape2D_uvfpa")
+
+[node name="Ball" type="CharacterBody2D" parent="."]
+position = Vector2(576, 324)
+scale = Vector2(0.9, 0.9)
+collision_mask = 3
+script = ExtResource("6_slau7")
+
+[node name="Sprite2D" type="Sprite2D" parent="Ball"]
+texture = ExtResource("3_a3emq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball"]
+shape = SubResource("CircleShape2D_alcwd")
+
+[node name="Borders" type="StaticBody2D" parent="."]
+
+[node name="top" type="CollisionShape2D" parent="Borders"]
+position = Vector2(576, -29)
+shape = SubResource("RectangleShape2D_t00ru")
+
+[node name="bottom" type="CollisionShape2D" parent="Borders"]
+position = Vector2(576, 677)
+shape = SubResource("RectangleShape2D_t00ru")
+
+[node name="ScoreLeft" type="Area2D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ScoreLeft"]
+position = Vector2(-48, 324)
+shape = SubResource("RectangleShape2D_3hik1")
+
+[node name="ScoreRight" type="Area2D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ScoreRight"]
+position = Vector2(1200, 324)
+shape = SubResource("RectangleShape2D_3hik1")
+
+[node name="Scores" type="CanvasLayer" parent="."]
+
+[node name="P1score" type="Label" parent="Scores"]
+offset_left = 456.0
+offset_top = 30.0
+offset_right = 498.0
+offset_bottom = 78.0
+theme_override_fonts/font = ExtResource("4_ruj6y")
+theme_override_font_sizes/font_size = 48
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="P2score" type="Label" parent="Scores"]
+offset_left = 648.0
+offset_top = 30.0
+offset_right = 690.0
+offset_bottom = 78.0
+theme_override_fonts/font = ExtResource("4_ruj6y")
+theme_override_font_sizes/font_size = 48
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BallTimer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="body_entered" from="ScoreLeft" to="." method="_on_score_left_body_entered"]
+[connection signal="body_entered" from="ScoreRight" to="." method="_on_score_right_body_entered"]
+[connection signal="timeout" from="BallTimer" to="." method="_on_ball_timer_timeout"]
